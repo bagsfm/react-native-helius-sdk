@@ -6,8 +6,6 @@ import {
   MintlistRequest,
   MintlistResponse,
   MintlistItem,
-  MintApiRequest,
-  MintApiResponse,
   MintApiAuthority,
   DelegateCollectionAuthorityRequest,
   RevokeCollectionAuthorityRequest,
@@ -22,8 +20,6 @@ import {
   Transaction,
   sendAndConfirmTransaction,
 } from '@solana/web3.js';
-import Irys from '@irys/sdk';
-import * as fs from 'fs';
 import { getHeliusEndpoints } from './utils';
 import { RpcClient } from './RpcClient';
 import {
@@ -233,8 +229,7 @@ export class Helius {
     } catch (err: any | AxiosError) {
       if (axios.isAxiosError(err)) {
         throw new Error(
-          `error during appendAddressesToWebhook: ${
-            err.response?.data.error || err
+          `error during appendAddressesToWebhook: ${err.response?.data.error || err
           }`
         );
       } else {
@@ -265,8 +260,7 @@ export class Helius {
     } catch (err: any | AxiosError) {
       if (axios.isAxiosError(err)) {
         throw new Error(
-          `error during removeAddressesFromWebhook: ${
-            err.response?.data.error || err
+          `error during removeAddressesFromWebhook: ${err.response?.data.error || err
           }`
         );
       } else {
@@ -340,8 +334,7 @@ export class Helius {
     } catch (err: any | AxiosError) {
       if (axios.isAxiosError(err)) {
         throw new Error(
-          `error during createCollectionWebhook: ${
-            err.response?.data.error || err
+          `error during createCollectionWebhook: ${err.response?.data.error || err
           }`
         );
       } else {
@@ -378,36 +371,6 @@ export class Helius {
         );
       } else {
         throw new Error(`error during getMintlist: ${err}`);
-      }
-    }
-  }
-
-  /**
-   * Mints a cNFT via Helius Mint API
-   * @param {MintApiRequest} mintApiRequest - the request object containing the mint information
-   * @returns {Promise<MintApiResponse>} a promise that resolves to the mint response object
-   */
-  async mintCompressedNft(
-    mintApiRequest: MintApiRequest
-  ): Promise<MintApiResponse> {
-    await this.handleImageUpload(mintApiRequest);
-    try {
-      const { data } = await axios.post(this.endpoint, {
-        jsonrpc: '2.0',
-        id: 'helius-test',
-        method: 'mintCompressedNft',
-        params: { ...mintApiRequest },
-      });
-      return data;
-    } catch (err: any | AxiosError) {
-      if (axios.isAxiosError(err)) {
-        throw new Error(
-          `error during mintCompressedNft: ${
-            err.response?.data.error.message || err
-          }`
-        );
-      } else {
-        throw new Error(`error during mintCompressedNft: ${err}`);
       }
     }
   }
@@ -580,57 +543,6 @@ export class Helius {
     return data;
   }
 
-  private async handleImageUpload(mintApiRequest: MintApiRequest) {
-    if (mintApiRequest.imagePath && mintApiRequest.imageUrl) {
-      throw new Error(
-        'Cannot provide both imagePath and imageUrl. Please only provide one.'
-      );
-    }
-
-    if (mintApiRequest.imagePath && !mintApiRequest.walletPrivateKey) {
-      throw new Error('Must provide wallet privateKey if providing imagePath.');
-    }
-
-    if (mintApiRequest.imagePath && mintApiRequest.walletPrivateKey) {
-      mintApiRequest.imageUrl = await this.uploadImageToArweave(
-        mintApiRequest.imagePath,
-        mintApiRequest.walletPrivateKey
-      );
-    }
-    delete mintApiRequest.imagePath;
-    delete mintApiRequest.walletPrivateKey;
-  }
-
-  private async uploadImageToArweave(imagePath: string, privateKey: string) {
-    const irys = new Irys({
-      url:
-        this.cluster === 'mainnet-beta'
-          ? 'https://node2.irys.xyz'
-          : 'https://devnet.irys.xyz',
-      token: 'solana',
-      key: privateKey,
-      config: {
-        providerUrl: this.endpoint,
-      },
-    });
-
-    const stats = fs.statSync(imagePath);
-    const fileSizeInBytes = stats.size;
-    const fileSizeInKB = fileSizeInBytes / 1000;
-    if (this.cluster === 'devnet' || fileSizeInKB >= 200) {
-      // Uploads on node2 (mainnet) are free for files under 200KB
-      const price = await irys.getPrice(fileSizeInBytes);
-      await irys.fund(price, 1.1);
-    }
-
-    try {
-      const receipt = await irys.uploadFile(imagePath);
-      const url = `https://arweave.net/${receipt.id}`;
-      return url;
-    } catch (e) {
-      throw new Error(`error uploading image to Arweave: ${e}`);
-    }
-  }
   private getCollectionAuthorityRecord(
     collectionMint: PublicKey,
     collectionAuthority: PublicKey

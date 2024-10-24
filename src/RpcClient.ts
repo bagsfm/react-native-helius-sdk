@@ -21,7 +21,6 @@ import {
   SystemProgram,
   SerializeConfig,
   TransactionExpiredBlockheightExceededError,
-  SendOptions as SolanaWebJsSendOptions,
 } from '@solana/web3.js';
 import bs58 from 'bs58';
 import axios from 'axios';
@@ -52,7 +51,7 @@ export class RpcClient {
   constructor(
     protected readonly connection: Connection,
     protected readonly id?: string
-  ) {}
+  ) { }
 
   /**
    * Request an allocation of lamports to the specified address
@@ -450,7 +449,7 @@ export class RpcClient {
       if (response.data.error) {
         throw new Error(`Error fetching priority fee estimate: ${JSON.stringify(response.data.error, null, 2)}`);
       }
-  
+
       return response.data.result as GetPriorityFeeEstimateResponse;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -780,7 +779,7 @@ export class RpcClient {
             commitment
           );
 
-          abortSignal.removeEventListener('abort', () => {});
+          abortSignal.removeEventListener('abort', () => { });
 
           return signature;
         } catch (_error: any) {
@@ -1090,7 +1089,7 @@ export class RpcClient {
           jsonrpc: '2.0',
           id: this.id,
           method: 'sendTransaction',
-          params: [rawTransaction, {encoding: 'base64', ...options}],
+          params: [rawTransaction, { encoding: 'base64', ...options }],
         },
         {
           headers: { 'Content-Type': 'application/json' },
