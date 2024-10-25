@@ -560,7 +560,8 @@ export class RpcClient {
       requireAllSignatures: true,
       verifySignatures: true,
     },
-    signTransaction: boolean = true
+    signTransaction: boolean = true,
+    forceVersionedTx: boolean = false
   ): Promise<SmartTransactionContext> {
     if (!signers.length) {
       throw new Error('The transaction must have at least one signer');
@@ -588,7 +589,7 @@ export class RpcClient {
     const recentBlockhash = blockhash.blockhash;
 
     // Determine if we need to use a versioned transaction
-    const isVersioned = lookupTables.length > 0;
+    const isVersioned = lookupTables.length > 0 || forceVersionedTx;
     let legacyTransaction: Transaction | null = null;
     let versionedTransaction: VersionedTransaction | null = null;
 
@@ -656,7 +657,7 @@ export class RpcClient {
       instructions,
       payerKey,
       isVersioned ? lookupTables : [],
-      signTransaction ? signers : []
+      signTransaction ? signers : [],
     );
 
     if (!units) {
