@@ -493,7 +493,7 @@ export class RpcClient {
     const rpcResponse = await this.connection.simulateTransaction(
       testTransaction,
       {
-        sigVerify: !!signers,
+        sigVerify: !!signers?.length,
       }
     );
 
