@@ -559,7 +559,8 @@ export class RpcClient {
     serializeOptions: SerializeConfig = {
       requireAllSignatures: true,
       verifySignatures: true,
-    }
+    },
+    signTransaction: boolean = true
   ): Promise<SmartTransactionContext> {
     if (!signers.length) {
       throw new Error('The transaction must have at least one signer');
@@ -579,6 +580,7 @@ export class RpcClient {
 
     // For building the transaction
     const payerKey = feePayer ? feePayer.publicKey : signers[0].publicKey;
+
     const {
       context: { slot: minContextSlot },
       value: blockhash,
@@ -600,20 +602,24 @@ export class RpcClient {
 
       versionedTransaction = new VersionedTransaction(v0Message);
 
-      // Include feePayer in signers if it exists and is not already in the list
-      const allSigners = feePayer ? [...signers, feePayer] : signers;
-      versionedTransaction.sign(allSigners);
+      if (signTransaction) {
+        // Include feePayer in signers if it exists and is not already in the list
+        const allSigners = feePayer ? [...signers, feePayer] : signers;
+        versionedTransaction.sign(allSigners);
+      }
     } else {
       legacyTransaction = new Transaction().add(...instructions);
       legacyTransaction.recentBlockhash = recentBlockhash;
       legacyTransaction.feePayer = payerKey;
 
-      for (const signer of signers) {
-        legacyTransaction.partialSign(signer);
-      }
+      if (signTransaction) {
+        for (const signer of signers) {
+          legacyTransaction.partialSign(signer);
+        }
 
-      if (feePayer) {
-        legacyTransaction.partialSign(feePayer);
+        if (feePayer) {
+          legacyTransaction.partialSign(feePayer);
+        }
       }
     }
 
@@ -650,7 +656,7 @@ export class RpcClient {
       instructions,
       payerKey,
       isVersioned ? lookupTables : [],
-      signers
+      signTransaction ? signers : []
     );
 
     if (!units) {
@@ -678,8 +684,10 @@ export class RpcClient {
 
       versionedTransaction = new VersionedTransaction(v0Message);
 
-      const allSigners = feePayer ? [...signers, feePayer] : signers;
-      versionedTransaction.sign(allSigners);
+      if (signTransaction) {
+        const allSigners = feePayer ? [...signers, feePayer] : signers;
+        versionedTransaction.sign(allSigners);
+      }
 
       return {
         transaction: versionedTransaction,
@@ -687,16 +695,19 @@ export class RpcClient {
         minContextSlot,
       };
     }
+
     legacyTransaction = new Transaction().add(...instructions);
     legacyTransaction.recentBlockhash = recentBlockhash;
     legacyTransaction.feePayer = payerKey;
 
-    for (const signer of signers) {
-      legacyTransaction.partialSign(signer);
-    }
+    if (signTransaction) {
+      for (const signer of signers) {
+        legacyTransaction.partialSign(signer);
+      }
 
-    if (feePayer) {
-      legacyTransaction.partialSign(feePayer);
+      if (feePayer) {
+        legacyTransaction.partialSign(feePayer);
+      }
     }
 
     return {

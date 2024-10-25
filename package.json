@@ -1,7 +1,7 @@
 {
-  "name": "helius-sdk",
-  "version": "1.4.0",
-  "description": "SDK for the Helius API (https://helius.xyz)",
+  "name": "@bagsfm/react-native-helius-sdk",
+  "version": "1.0.0",
+  "description": "React Native SDK for the Helius API (https://helius.xyz)",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
@@ -19,9 +19,19 @@
     "web3",
     "crypto",
     "api",
-    "sdk"
+    "sdk",
+    "react-native",
+    "mobile"
   ],
-  "author": "Helius",
+  "author": "ramyodev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ramyodev/react-native-helius-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ramyodev/react-native-helius-sdk/issues"
+  },
+  "homepage": "https://github.com/ramyodev/react-native-helius-sdk#readme",
   "license": "ISC",
   "devDependencies": {
     "@solana/web3.js": "^1.73.2",
@@ -46,5 +56,8 @@
     "@metaplex-foundation/mpl-token-metadata": "^2.5.2",
     "axios": "^1.2.3",
     "bs58": "^6.0.0"
+  },
+  "peerDependencies": {
+    "react-native": ">=0.60.0"
   }
 }

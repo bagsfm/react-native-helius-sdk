@@ -1,7 +1,7 @@
 # Helius Node.js SDK
 
 [![Version](https://img.shields.io/npm/v/helius-sdk)](https://www.npmjs.org/package/helius-sdk)
-![Downloads](https://img.shields.io/npm/dm/helius-sdk)
+![Downloads](https://img.shields.io/npm/dm/react-native-helius-sdk)
 
 The Helius Node.js library provides access to the Helius API from JavaScript/TypeScript.
 
@@ -65,11 +65,11 @@ try {
 
 When working with the Helius SDK, you may encounter several error codes. Below is a table detailing some of the common error codes along with additional information to help you troubleshoot:
 
-| Error Code | Error Message             | More Information                                                                           |
-|------------|---------------------------|---------------------------------------------------------------------------------------------|
-| 401        | Unauthorized              | This occurs when an invalid API key is provided or access is restricted due to RPC rules.   |
-| 429        | Too Many Requests         | This indicates that the user has exceeded the request limit in a given timeframe or is out of credits. |
-| 5XX        | Internal Server Error     | This is a generic error message for server-side issues. Please contact Helius support for assistance. |
+| Error Code | Error Message         | More Information                                                                                       |
+| ---------- | --------------------- | ------------------------------------------------------------------------------------------------------ |
+| 401        | Unauthorized          | This occurs when an invalid API key is provided or access is restricted due to RPC rules.              |
+| 429        | Too Many Requests     | This indicates that the user has exceeded the request limit in a given timeframe or is out of credits. |
+| 5XX        | Internal Server Error | This is a generic error message for server-side issues. Please contact Helius support for assistance.  |
 
 If you encounter any of these errors, refer to the Helius documentation for further guidance, or reach out to the Helius support team for more detailed assistance.
 
