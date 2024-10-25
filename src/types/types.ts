@@ -368,11 +368,21 @@ export type JitoRegion = 'Default' | 'NY' | 'Amsterdam' | 'Frankfurt' | 'Tokyo';
 export type PollTransactionOptions = {
   confirmationStatuses?: TransactionConfirmationStatus[];
   // In milliseconds
-  timeout?: number; 
+  timeout?: number;
   // In milliseconds
   interval?: number;
 }
 
 export interface HeliusSendOptions extends SolanaWebJsSendOptions {
   validatorAcls?: string[];
+}
+
+/**
+ * Configuration object for createSmartTransaction()
+ */
+export interface SmartTransactionOptions {
+  /** Optionally disable signing*/
+  signTransaction?: boolean;
+  /** Optionally force the use of Versioned Transactions*/
+  forceVersionedTx?: boolean;
 }
